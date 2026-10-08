@@ -45,4 +45,28 @@ double divide(double a, double b) {
     return a / b;
 }
 
+// декоратор проверки
+// он проверяет на деление на ноль и возвращает исходную функцию
+Operation div_with_validation(Operation operation) {
+    return [operation = std::move(operation)](double a, double b) {
+        if (b == 0.0) {
+            throw std::domain_error("Division by zero");
+        }
+        const double result = operation(a, b);
+        return result;
+    };
+}
+
+// декоратор журнала
+// он печатает аргументы и результат
+Operation with_logging(Operation operation, std::string name) {
+    return [operation = std::move(operation), name = std::move(name)]
+           (double a, double b) {
+        std::cout << name << '(' << a << ", " << b << ")" << endl;
+        const double result = operation(a, b);
+        std::cout << "result = " << result << endl;
+        return result;
+    };
+}
+
 } // конец неймспейса хомворк
