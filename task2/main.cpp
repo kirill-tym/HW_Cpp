@@ -70,3 +70,35 @@ Operation with_logging(Operation operation, std::string name) {
 }
 
 } // конец неймспейса хомворк
+
+int main() {
+    using namespace homework;
+
+    // стратегия
+    std::cout << "Strategy: changing the operation" << endl;
+    Calculator calculator(add);
+    std::cout << "Add: " << calculator.calculate(8, 2) << endl;
+
+    calculator.set_strategy(multiply);
+    std::cout << "Multi: " << calculator.calculate(8, 2) << endl;
+
+    calculator.set_strategy(divide);
+    std::cout << "Div: " << calculator.calculate(8, 2) << endl;
+
+    // стратегией может быть и лямбда-функция
+    calculator.set_strategy([](double a, double b) { return a - b; });
+    std::cout << "Lambda: " << calculator.calculate(8, 2) << endl;
+
+    // декораторы
+    std::cout << endl << "Decorators: logging and validation" << endl;
+    calculator.set_strategy(with_logging(div_with_validation(divide), "divide"));
+    const double result = calculator.calculate(8, 2);
+    std::cout << "Decorated result: " << result << endl;
+
+    // исключения декоратора (нельзя делить на ноль - это нписано в 50-52)
+    try {
+        calculator.calculate(8, 0);
+    } catch (const std::domain_error& error) {
+        std::cout << "Caught: " << error.what() << endl;
+    }
+}
